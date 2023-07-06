@@ -4,22 +4,18 @@ function Square({ value, onSquareClick }) {
   //console.log("Greeting was rendered at", new Date().toLocaleTimeString());
 
   return (
-    <button className="square" onClick={onSquareClick}>
+    <button className='square' onClick={onSquareClick}>
       {value}
     </button>
   );
 }
 
-export default function Board() {
-  const [isNext, setIsNext] = useState(true);
-  const [squares, setSquares] = useState(new Array(9).fill(null));
-
+function Board({ isNext, squares, onPlay }) {
   function handleClick(index: number) {
     if (squares[index] || calculateWinner(squares)) return;
     const nextSquares = squares.slice();
     nextSquares[index] = isNext ? "X" : "O";
-    setSquares(nextSquares);
-    setIsNext(!isNext);
+    onPlay(nextSquares);
   }
 
   const winner = calculateWinner(squares); // winner statei olusturulabilir fonksiyonu bi kere calistirmak icin
@@ -51,6 +47,28 @@ export default function Board() {
         <Square value={squares[8]} onSquareClick={() => handleClick(8)} />
       </div>
     </>
+  );
+}
+
+export default function Game() {
+  const [isNext, setIsNext] = useState(true);
+  const [history, setHistory] = useState([new Array(9).fill(null)]);
+  const currentSquares= history[history.length - 1];
+
+  function handlePLay(nextSquares) {
+    setHistory([...history ,nextSquares]);
+    setIsNext(!isNext);
+  }
+
+  return (
+    <div className='game'>
+      <div className='game-board'>
+        <Board isNext={isNext} squares={currentSquares} onPlay={handlePLay} />
+      </div>
+      <div className='game-info'>
+        <ol>TODO</ol>
+      </div>
+    </div>
   );
 }
 
